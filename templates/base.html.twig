@@ -1,0 +1,219 @@
+<!doctype html>
+<html lang="no">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Billigfylla</title>
+    <link rel="stylesheet" href="../css/nouislider.css">
+    <script src="../js/nouislider.min.js"></script>
+
+    <link rel="stylesheet" href="../css/materialize.min.css">
+    <script src="../js/materialize.min.js"></script>
+
+    <link href="https://fonts.googleapis.com/css?family=Domine" rel="stylesheet">
+    <style>
+        .title{
+            font-family: 'Domine', serif;
+            font-weight: bold;
+        }
+
+        .subtitle{
+            font-family: 'Domine', serif;
+        }
+
+        .collection-item .name{
+            font-family: 'Domine', serif;
+        }
+
+        .collection-item .name a{
+            border-bottom: 0px solid;
+            transition: border .1s;
+        }
+
+        .collection-item .name :hover{
+            border-bottom: 3px solid;
+        }
+
+        .volume{
+            position: relative;
+            top:9px;
+            font-size: 15pt;
+        }
+        
+        .btn [type="submit"]{
+            color: #fff;
+        }
+
+        .maxpricelabel{
+            position: relative;
+            top: 9px;
+        }
+
+        .dropdown-head-buttons, .dropdown-head-buttons .btn{
+            margin-bottom: 0;
+        }
+
+        .dropdown-head-buttons .btn{
+            height: 50px;
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="main-wrapper row">
+    <div class="main col s8 offset-s2">
+        <div class="header row">
+            <div class="col s12">
+                <h1 class="title">
+                    Billigfylla
+                </h1>
+            </div>
+            <div class="col s12 subheader">
+                <p class="subtitle">
+                    Mest alkohol for pengene
+                </p>
+            </div>
+        </div>
+
+        <div class="row search-bar card">
+            <div class="card-content">
+                <form action="" method="get">
+                    <div class="row top">
+                        <div class="col s3 price-input z-depth-1">
+                                <p class="col s6 maxpricelabel">Maks pris:</p>
+                                <input type="number" name="mp" id="maxprice" class="col s6" value="{{ maxprice }}">
+                        </div>
+                        <div class="col s6 offset-s1 volume-input z-depth-1">
+                            <div class="col s6 minvolume-wrapper">
+                                <p class="col s6 minvolumelabel">
+                                    Minimum volum:
+                                </p>
+                                <input type="number" step="0.01" name="mnv" id="minvolume" class="col s6" value="{{ minvolume }}">
+                            </div>
+                            <div class="col s6 maxvolume-label">
+                                <p class="col s6 maxvolumelabel">
+                                    Maks Volum:
+                                </p>
+                                <input type="number" step="0.01" name="mxv" id="maxvolume" class="col s6" value="{{ maxvolume }}">
+                            </div>
+                        </div>
+                        <div class="col s2 orderonly-input">
+                            <label>
+                                <input type="checkbox" name="o" id="orderonly" value="1">
+                                <span>Inkluder bestillingsvarer</span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="row bottom">
+                        <div class="col s4">
+
+
+                            <div class="dropdown-trigger col s12 btn-flat" data-target="typedropdown"><p>Typer &blacktriangledown;</p> </div>
+                            <ul class="dropdown-content" id="typedropdown">
+                                <li class="row dropdown-head-buttons">
+                                    <div class="col s6 btn-flat btn" onclick="document.querySelectorAll(
+                                        '.type-checkbox').forEach(function(e) {
+                                        e.checked = true;
+                                            })">Velg alle</div>
+                                    <div class="col s6 btn-flat btn" onclick="document.querySelectorAll(
+                                        '.type-checkbox').forEach(function(e) {
+                                        e.checked = false;
+                                            })">Avvelg alle</div></li>
+                                <li class="divider"></li>
+                                {% for type in types %}
+                                    <li class="col">
+                                        <label>
+                                            <input type="checkbox" class="type-checkbox" id="i{{ type.id }}" {% if type.selected %}checked{% endif %} >
+                                            <span>{{ type.name }}</span>
+                                        </label>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                    <input type="hidden" name="include" id="includeField">
+                    <input type="submit" class="btn" value="Oppdater">
+                </form>
+            </div>
+
+        </div>
+
+        <div class="list-wrapper collection">
+            {% for item in products  %}
+                <div class="collection-item row">
+                    <div class="left col s9">
+                        <div class="top-row row">
+                            <h5 class="name col">
+                                <a href="{{ item.URL }}" class="red-text">{{ item.Name }}</a>
+                            </h5>
+                            <h6 class="volume col grey-text ">
+                                {{ item.Volume }}L
+                            </h6>
+                        </div>
+                        <div class="bottom-row row">
+                            <div class="drinktype col">
+                                <b>Type</b>: <span class="type">{{ item.ProductType }}</span>
+                            </div>
+                            <div class="alcohol col">
+                                <b>Alkoholprosent</b>: <span class="percent">{{ item.Alcohol }}</span>%
+                            </div>
+                            <div class="orderonly col">
+                                <b>Bestillingsvare</b>: <span> {% if item.OrderOnly == 1 %}
+                                        Ja
+                                        {% else %}
+                                        Nei
+                                    {% endif %} </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="right col s3">
+                        <h3 class="price grey-text">{{ item.Price }} kr</h3>
+                    </div>
+                </div>
+            {% endfor %}
+            {% if not products %}
+                Vi fant ingenting innenfor de rammene du har satt :(
+            {% endif %}
+        </div>
+    </div>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var elems = document.querySelectorAll('.dropdown-trigger');
+        var instances = M.Dropdown.init(elems, {
+            'closeOnClick':false
+        });
+    });
+
+    document.forms[0].onsubmit = function (e) {
+        e.preventDefault();
+
+
+        let numTypes = {{ types|length }};
+        let bin = new Array(numTypes);
+
+        for(i = 0; i < numTypes; i++){
+            bin[i] = document.querySelector("#i" + i).checked ? "1" : "0";
+        }
+
+        let binWords = new Array(Math.ceil(numTypes/16));
+        console.log(bin);
+        for (var i = 0; i < Math.ceil(numTypes/16); i++){
+            binWords[i] = bin.splice(0,16);
+            console.log(binWords[i]);
+        }
+        console.log(binWords);
+        let encoded = binWords.map(a => parseInt(a.join(""),2).toString(36)).join(" ");
+        console.log(encoded);
+
+        document.querySelector("#includeField").value = encoded;
+
+        this.submit();
+    }
+
+</script>
+</body>
+</html>
